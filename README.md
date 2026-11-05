@@ -21,6 +21,9 @@ Install ONE of these, then restart the server:
 Copy `.env.example` to `.env` and add `GEMINI_API_KEY` (free key: https://aistudio.google.com/apikey).
 Without a key everything still works offline; with a key, questions written from documents use the document's real facts and include model answers.
 
+## Guardrails (new)
+The assistant stays inside the AI syllabus and the material you upload; see `GUARDRAILS.md`. Run `python tests/test_guardrails.py` to verify.
+
 ## What it does
 | Feature | How |
 |---|---|
@@ -31,3 +34,15 @@ Without a key everything still works offline; with a key, questions written from
 | Questions from documents | PPTX / DOCX / PDF / TXT / images; choose number, Bloom levels, type (short, long, MCQ, mixed), difficulty, marks; export to Word or Excel |
 
 Legacy `.doc` / `.ppt` files must be re-saved as `.docx` / `.pptx`.
+| Question-paper builder | Choose several topics (syllabus chapters or your document's headings), set how many questions you want at each Bloom level, download as Word / Excel |
+| Better conversation | "upgrade question 3", "why is it Apply?", "what topics can I ask about?", corrections, typo and politeness tolerance |
+
+## Syllabus data (rebuild only if you change the textbook)
+```bash
+python scripts/build_syllabus.py path/to/textbook.pdf   # table of contents -> backend/data/syllabus.json (parts, chapters, subtopics)
+python scripts/build_index.py    path/to/textbook.pdf   # textbook passages -> backend/data/textbook_chunks.json + textbook_index.joblib
+```
+The question-paper builder lists every unit, chapter and subtopic found in `syllabus.json`.
+
+## New: keyword relevance, one-topic rule, conditional branching
+See `BRANCHING.md`. The evaluation metric is now a bag-of-words **keyword relevance** score; a prompt with more than one topic makes the bot ask which one to continue on; every chat reply reports the conditional branch it took. Run `python tests/test_branching.py` to verify.

@@ -1,6 +1,8 @@
 """Optional LLM layer (Gemini first, OpenRouter second). Everything works without keys."""
 import os, json, re, time, requests
 
+import guard
+
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
 
 last_error = None  # shown in the UI when the AI call fails and we fall back
@@ -87,12 +89,13 @@ def _friendly(errors):
     return ("; ".join(parts) or "request failed") + f" ({detail})"
 
 
-def _gemini(prompt, parts=None, json_mode=True):
+def _gemini(prompt, parts=None, json_mode=True, system=None):
     key = _key("GEMINI_API_KEY")
     cfg = {"temperature": 0.3 if json_mode else 0}
     if json_mode:
         cfg["responseMimeType"] = "application/json"
-    body = {"contents": [{"parts": parts or [{"text": prompt}]}], "generationConfig": cfg}
+    body = {"systemInstruction": {"parts": [{"text": system or guard.SYSTEM_RULES}]},      # fixed rules: the user can not change them
+            "contents": [{"parts": parts or [{"text": prompt}]}], "generationConfig": cfg}
     tried, errors, budget = set(), [], [6]                # at most 6 HTTP calls per request
 
     def run(models):
@@ -124,16 +127,16 @@ def _gemini(prompt, parts=None, json_mode=True):
     raise RuntimeError(_friendly(errors))
 
 
-def _openrouter(prompt):
+def _openrouter(prompt, system=None):
     r = requests.post("https://openrouter.ai/api/v1/chat/completions", timeout=60,
                       headers={"Authorization": f"Bearer {_key('OPENROUTER_API_KEY')}"},
                       json={"model": OPENROUTER_MODEL, "temperature": 0.3,
-                            "messages": [{"role": "user", "content": prompt}]})
+                            "messages": [{"role": "system", "content": system or guard.SYSTEM_RULES}, {"role": "user", "content": prompt}]})
     r.raise_for_status()
     return r.json()["choices"][0]["message"]["content"]
 
 
-def ask_json(prompt):
+def ask_json(prompt, system=None):
     """Return parsed JSON dict, or None if no key / every call failed (caller falls back)."""
     global last_error
     errs = []
@@ -141,7 +144,7 @@ def ask_json(prompt):
         if not _key(name):
             continue
         try:
-            txt = fn(prompt + "\n\nReply with a single valid JSON object only.")
+            txt = fn(prompt + "\n\nReply with a single valid JSON object only.", system=system)
             txt = re.sub(r"^```(?:json)?|```$", "", txt.strip(), flags=re.M).strip()
             last_error = None
             return json.loads(txt)
@@ -152,6 +155,11 @@ def ask_json(prompt):
     return None
 
 
+def out_of_scope(ai):
+    """True when the model reported that the data is outside the allowed subject."""
+    return isinstance(ai, dict) and ai.get("in_scope") is False
+
+
 def vision_text(prompt, image_bytes, mime="image/png"):
     """Ask Gemini to read an image (used as the last-resort OCR). Returns text or None."""
     global last_error
@@ -159,7 +167,7 @@ def vision_text(prompt, image_bytes, mime="image/png"):
         return None
     import base64
     try:
-        out = _gemini(prompt, parts=[{"text": prompt}, {"inline_data": {"mime_type": mime, "data": base64.b64encode(image_bytes).decode()}}], json_mode=False)
+        out = _gemini(prompt, parts=[{"text": prompt}, {"inline_data": {"mime_type": mime, "data": base64.b64encode(image_bytes).decode()}}], json_mode=False, system=guard.SYSTEM_OCR)
         last_error = None
         return out
     except Exception as e:

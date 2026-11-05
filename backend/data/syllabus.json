@@ -1,0 +1,1256 @@
+{
+ "units": [
+  {
+   "name": "Part I: Artificial Intelligence",
+   "chapters": [
+    {
+     "id": 1,
+     "number": "1",
+     "title": "Introduction",
+     "start": 20,
+     "sections": [
+      {
+       "number": "1.1",
+       "title": "What Is AI?",
+       "start": 20,
+       "end": 23
+      },
+      {
+       "number": "1.2",
+       "title": "The Foundations of Artificial Intelligence",
+       "start": 24,
+       "end": 34
+      },
+      {
+       "number": "1.3",
+       "title": "The History of Artificial Intelligence",
+       "start": 35,
+       "end": 46
+      },
+      {
+       "number": "1.4",
+       "title": "The State of the Art",
+       "start": 47,
+       "end": 52
+      }
+     ],
+     "end": 52
+    },
+    {
+     "id": 2,
+     "number": "2",
+     "title": "Intelligent Agents",
+     "start": 53,
+     "sections": [
+      {
+       "number": "2.1",
+       "title": "Agents and Environments",
+       "start": 53,
+       "end": 54
+      },
+      {
+       "number": "2.2",
+       "title": "Good Behavior: The Concept of Rationality",
+       "start": 55,
+       "end": 58
+      },
+      {
+       "number": "2.3",
+       "title": "The Nature of Environments",
+       "start": 59,
+       "end": 64
+      },
+      {
+       "number": "2.4",
+       "title": "The Structure of Agents",
+       "start": 65,
+       "end": 82
+      }
+     ],
+     "end": 82
+    }
+   ]
+  },
+  {
+   "name": "Part II: Problem-solving",
+   "chapters": [
+    {
+     "id": 3,
+     "number": "3",
+     "title": "Solving Problems by Searching",
+     "start": 83,
+     "sections": [
+      {
+       "number": "3.1",
+       "title": "Problem-Solving Agents",
+       "start": 83,
+       "end": 87
+      },
+      {
+       "number": "3.2",
+       "title": "Example Problems",
+       "start": 88,
+       "end": 93
+      },
+      {
+       "number": "3.3",
+       "title": "Searching for Solutions",
+       "start": 94,
+       "end": 99
+      },
+      {
+       "number": "3.4",
+       "title": "Uninformed Search Strategies",
+       "start": 100,
+       "end": 110
+      },
+      {
+       "number": "3.5",
+       "title": "Informed (Heuristic) Search Strategies",
+       "start": 111,
+       "end": 120
+      },
+      {
+       "number": "3.6",
+       "title": "Heuristic Functions",
+       "start": 121,
+       "end": 138
+      }
+     ],
+     "end": 138
+    },
+    {
+     "id": 4,
+     "number": "4",
+     "title": "Beyond Classical Search",
+     "start": 139,
+     "sections": [
+      {
+       "number": "4.1",
+       "title": "Local Search Algorithms and Optimization Problems",
+       "start": 139,
+       "end": 147
+      },
+      {
+       "number": "4.2",
+       "title": "Local Search in Continuous Spaces",
+       "start": 148,
+       "end": 151
+      },
+      {
+       "number": "4.3",
+       "title": "Searching with Nondeterministic Actions",
+       "start": 152,
+       "end": 156
+      },
+      {
+       "number": "4.4",
+       "title": "Searching with Partial Observations",
+       "start": 157,
+       "end": 165
+      },
+      {
+       "number": "4.5",
+       "title": "Online Search Agents and Unknown Environments",
+       "start": 166,
+       "end": 179
+      }
+     ],
+     "end": 179
+    },
+    {
+     "id": 5,
+     "number": "5",
+     "title": "Adversarial Search",
+     "start": 180,
+     "sections": [
+      {
+       "number": "5.1",
+       "title": "Games",
+       "start": 180,
+       "end": 181
+      },
+      {
+       "number": "5.2",
+       "title": "Optimal Decisions in Games",
+       "start": 182,
+       "end": 185
+      },
+      {
+       "number": "5.3",
+       "title": "Alpha\u2013Beta Pruning",
+       "start": 186,
+       "end": 189
+      },
+      {
+       "number": "5.4",
+       "title": "Imperfect Real-Time Decisions",
+       "start": 190,
+       "end": 195
+      },
+      {
+       "number": "5.5",
+       "title": "Stochastic Games",
+       "start": 196,
+       "end": 198
+      },
+      {
+       "number": "5.6",
+       "title": "Partially Observable Games",
+       "start": 199,
+       "end": 203
+      },
+      {
+       "number": "5.7",
+       "title": "State-of-the-Art Game Programs",
+       "start": 204,
+       "end": 205
+      },
+      {
+       "number": "5.8",
+       "title": "Alternative Approaches",
+       "start": 206,
+       "end": 220
+      }
+     ],
+     "end": 220
+    },
+    {
+     "id": 6,
+     "number": "6",
+     "title": "Constraint Satisfaction Problems",
+     "start": 221,
+     "sections": [
+      {
+       "number": "6.1",
+       "title": "Defining Constraint Satisfaction Problems",
+       "start": 221,
+       "end": 226
+      },
+      {
+       "number": "6.2",
+       "title": "Constraint Propagation: Inference in CSPs",
+       "start": 227,
+       "end": 232
+      },
+      {
+       "number": "6.3",
+       "title": "Backtracking Search for CSPs",
+       "start": 233,
+       "end": 238
+      },
+      {
+       "number": "6.4",
+       "title": "Local Search for CSPs",
+       "start": 239,
+       "end": 240
+      },
+      {
+       "number": "6.5",
+       "title": "The Structure of Problems",
+       "start": 241,
+       "end": 252
+      }
+     ],
+     "end": 252
+    }
+   ]
+  },
+  {
+   "name": "Part III: Knowledge, reasoning, and planning",
+   "chapters": [
+    {
+     "id": 7,
+     "number": "7",
+     "title": "Logical Agents",
+     "start": 253,
+     "sections": [
+      {
+       "number": "7.1",
+       "title": "Knowledge-Based Agents",
+       "start": 254,
+       "end": 254
+      },
+      {
+       "number": "7.2",
+       "title": "The Wumpus World",
+       "start": 255,
+       "end": 258
+      },
+      {
+       "number": "7.3",
+       "title": "Logic",
+       "start": 259,
+       "end": 261
+      },
+      {
+       "number": "7.4",
+       "title": "Propositional Logic: A Very Simple Logic",
+       "start": 262,
+       "end": 267
+      },
+      {
+       "number": "7.5",
+       "title": "Propositional Theorem Proving",
+       "start": 268,
+       "end": 277
+      },
+      {
+       "number": "7.6",
+       "title": "Effective Propositional Model Checking",
+       "start": 278,
+       "end": 283
+      },
+      {
+       "number": "7.7",
+       "title": "Agents Based on Propositional Logic",
+       "start": 284,
+       "end": 303
+      }
+     ],
+     "end": 303
+    },
+    {
+     "id": 8,
+     "number": "8",
+     "title": "First-Order Logic",
+     "start": 304,
+     "sections": [
+      {
+       "number": "8.1",
+       "title": "Representation Revisited",
+       "start": 304,
+       "end": 308
+      },
+      {
+       "number": "8.2",
+       "title": "Syntax and Semantics of First-Order Logic",
+       "start": 309,
+       "end": 318
+      },
+      {
+       "number": "8.3",
+       "title": "Using First-Order Logic",
+       "start": 319,
+       "end": 325
+      },
+      {
+       "number": "8.4",
+       "title": "Knowledge Engineering in First-Order Logic",
+       "start": 326,
+       "end": 340
+      }
+     ],
+     "end": 340
+    },
+    {
+     "id": 9,
+     "number": "9",
+     "title": "Inference in First-Order Logic",
+     "start": 341,
+     "sections": [
+      {
+       "number": "9.1",
+       "title": "Propositional vs. First-Order Inference",
+       "start": 341,
+       "end": 343
+      },
+      {
+       "number": "9.2",
+       "title": "Unification and Lifting",
+       "start": 344,
+       "end": 348
+      },
+      {
+       "number": "9.3",
+       "title": "Forward Chaining",
+       "start": 349,
+       "end": 355
+      },
+      {
+       "number": "9.4",
+       "title": "Backward Chaining",
+       "start": 356,
+       "end": 363
+      },
+      {
+       "number": "9.5",
+       "title": "Resolution",
+       "start": 364,
+       "end": 384
+      }
+     ],
+     "end": 384
+    },
+    {
+     "id": 10,
+     "number": "10",
+     "title": "Classical Planning",
+     "start": 385,
+     "sections": [
+      {
+       "number": "10.1",
+       "title": "Definition of Classical Planning",
+       "start": 385,
+       "end": 391
+      },
+      {
+       "number": "10.2",
+       "title": "Algorithms for Planning as State-Space Search",
+       "start": 392,
+       "end": 397
+      },
+      {
+       "number": "10.3",
+       "title": "Planning Graphs",
+       "start": 398,
+       "end": 405
+      },
+      {
+       "number": "10.4",
+       "title": "Other Classical Planning Approaches",
+       "start": 406,
+       "end": 410
+      },
+      {
+       "number": "10.5",
+       "title": "Analysis of Planning Approaches",
+       "start": 411,
+       "end": 419
+      }
+     ],
+     "end": 419
+    },
+    {
+     "id": 11,
+     "number": "11",
+     "title": "Planning and Acting in the Real World",
+     "start": 420,
+     "sections": [
+      {
+       "number": "11.1",
+       "title": "Time, Schedules, and Resources",
+       "start": 420,
+       "end": 424
+      },
+      {
+       "number": "11.2",
+       "title": "Hierarchical Planning",
+       "start": 425,
+       "end": 433
+      },
+      {
+       "number": "11.3",
+       "title": "Planning and Acting in Nondeterministic Domains",
+       "start": 434,
+       "end": 443
+      },
+      {
+       "number": "11.4",
+       "title": "Multiagent Planning",
+       "start": 444,
+       "end": 455
+      }
+     ],
+     "end": 455
+    },
+    {
+     "id": 12,
+     "number": "12",
+     "title": "Knowledge Representation",
+     "start": 456,
+     "sections": [
+      {
+       "number": "12.1",
+       "title": "Ontological Engineering",
+       "start": 456,
+       "end": 458
+      },
+      {
+       "number": "12.2",
+       "title": "Categories and Objects",
+       "start": 459,
+       "end": 464
+      },
+      {
+       "number": "12.3",
+       "title": "Events",
+       "start": 465,
+       "end": 468
+      },
+      {
+       "number": "12.4",
+       "title": "Mental Events and Mental Objects",
+       "start": 469,
+       "end": 471
+      },
+      {
+       "number": "12.5",
+       "title": "Reasoning Systems for Categories",
+       "start": 472,
+       "end": 476
+      },
+      {
+       "number": "12.6",
+       "title": "Reasoning with Default Information",
+       "start": 477,
+       "end": 480
+      },
+      {
+       "number": "12.7",
+       "title": "The Internet Shopping World",
+       "start": 481,
+       "end": 498
+      }
+     ],
+     "end": 498
+    }
+   ]
+  },
+  {
+   "name": "Part IV: Uncertain knowledge and reasoning",
+   "chapters": [
+    {
+     "id": 13,
+     "number": "13",
+     "title": "Quantifying Uncertainty",
+     "start": 499,
+     "sections": [
+      {
+       "number": "13.1",
+       "title": "Acting under Uncertainty",
+       "start": 499,
+       "end": 501
+      },
+      {
+       "number": "13.2",
+       "title": "Basic Probability Notation",
+       "start": 502,
+       "end": 508
+      },
+      {
+       "number": "13.3",
+       "title": "Inference Using Full Joint Distributions",
+       "start": 509,
+       "end": 512
+      },
+      {
+       "number": "13.4",
+       "title": "Independence",
+       "start": 513,
+       "end": 513
+      },
+      {
+       "number": "13.5",
+       "title": "Bayes\u2019 Rule and Its Use",
+       "start": 514,
+       "end": 517
+      },
+      {
+       "number": "13.6",
+       "title": "The Wumpus World Revisited",
+       "start": 518,
+       "end": 528
+      }
+     ],
+     "end": 528
+    },
+    {
+     "id": 14,
+     "number": "14",
+     "title": "Probabilistic Reasoning",
+     "start": 529,
+     "sections": [
+      {
+       "number": "14.1",
+       "title": "Representing Knowledge in an Uncertain Domain",
+       "start": 529,
+       "end": 531
+      },
+      {
+       "number": "14.2",
+       "title": "The Semantics of Bayesian Networks",
+       "start": 532,
+       "end": 536
+      },
+      {
+       "number": "14.3",
+       "title": "Efficient Representation of Conditional Distributions",
+       "start": 537,
+       "end": 540
+      },
+      {
+       "number": "14.4",
+       "title": "Exact Inference in Bayesian Networks",
+       "start": 541,
+       "end": 548
+      },
+      {
+       "number": "14.5",
+       "title": "Approximate Inference in Bayesian Networks",
+       "start": 549,
+       "end": 557
+      },
+      {
+       "number": "14.6",
+       "title": "Relational and First-Order Probability Models",
+       "start": 558,
+       "end": 564
+      },
+      {
+       "number": "14.7",
+       "title": "Other Approaches to Uncertain Reasoning",
+       "start": 565,
+       "end": 584
+      }
+     ],
+     "end": 584
+    },
+    {
+     "id": 15,
+     "number": "15",
+     "title": "Probabilistic Reasoning over Time",
+     "start": 585,
+     "sections": [
+      {
+       "number": "15.1",
+       "title": "Time and Uncertainty",
+       "start": 585,
+       "end": 588
+      },
+      {
+       "number": "15.2",
+       "title": "Inference in Temporal Models",
+       "start": 589,
+       "end": 596
+      },
+      {
+       "number": "15.3",
+       "title": "Hidden Markov Models",
+       "start": 597,
+       "end": 602
+      },
+      {
+       "number": "15.4",
+       "title": "Kalman Filters",
+       "start": 603,
+       "end": 608
+      },
+      {
+       "number": "15.5",
+       "title": "Dynamic Bayesian Networks",
+       "start": 609,
+       "end": 617
+      },
+      {
+       "number": "15.6",
+       "title": "Keeping Track of Many Objects",
+       "start": 618,
+       "end": 628
+      }
+     ],
+     "end": 628
+    },
+    {
+     "id": 16,
+     "number": "16",
+     "title": "Making Simple Decisions",
+     "start": 629,
+     "sections": [
+      {
+       "number": "16.1",
+       "title": "Combining Beliefs and Desires under Uncertainty",
+       "start": 629,
+       "end": 629
+      },
+      {
+       "number": "16.2",
+       "title": "The Basis of Utility Theory",
+       "start": 630,
+       "end": 633
+      },
+      {
+       "number": "16.3",
+       "title": "Utility Functions",
+       "start": 634,
+       "end": 640
+      },
+      {
+       "number": "16.4",
+       "title": "Multiattribute Utility Functions",
+       "start": 641,
+       "end": 644
+      },
+      {
+       "number": "16.5",
+       "title": "Decision Networks",
+       "start": 645,
+       "end": 646
+      },
+      {
+       "number": "16.6",
+       "title": "The Value of Information",
+       "start": 647,
+       "end": 651
+      },
+      {
+       "number": "16.7",
+       "title": "Decision-Theoretic Expert Systems",
+       "start": 652,
+       "end": 663
+      }
+     ],
+     "end": 663
+    },
+    {
+     "id": 17,
+     "number": "17",
+     "title": "Making Complex Decisions",
+     "start": 664,
+     "sections": [
+      {
+       "number": "17.1",
+       "title": "Sequential Decision Problems",
+       "start": 664,
+       "end": 670
+      },
+      {
+       "number": "17.2",
+       "title": "Value Iteration",
+       "start": 671,
+       "end": 674
+      },
+      {
+       "number": "17.3",
+       "title": "Policy Iteration",
+       "start": 675,
+       "end": 676
+      },
+      {
+       "number": "17.4",
+       "title": "Partially Observable MDPs",
+       "start": 677,
+       "end": 684
+      },
+      {
+       "number": "17.5",
+       "title": "Decisions with Multiple Agents: Game Theory",
+       "start": 685,
+       "end": 697
+      },
+      {
+       "number": "17.6",
+       "title": "Mechanism Design",
+       "start": 698,
+       "end": 711
+      }
+     ],
+     "end": 711
+    }
+   ]
+  },
+  {
+   "name": "Part V: Learning",
+   "chapters": [
+    {
+     "id": 18,
+     "number": "18",
+     "title": "Learning from Examples",
+     "start": 712,
+     "sections": [
+      {
+       "number": "18.1",
+       "title": "Forms of Learning",
+       "start": 712,
+       "end": 713
+      },
+      {
+       "number": "18.2",
+       "title": "Supervised Learning",
+       "start": 714,
+       "end": 715
+      },
+      {
+       "number": "18.3",
+       "title": "Learning Decision Trees",
+       "start": 716,
+       "end": 726
+      },
+      {
+       "number": "18.4",
+       "title": "Evaluating and Choosing the Best Hypothesis",
+       "start": 727,
+       "end": 731
+      },
+      {
+       "number": "18.5",
+       "title": "The Theory of Learning",
+       "start": 732,
+       "end": 735
+      },
+      {
+       "number": "18.6",
+       "title": "Regression and Classification with Linear Models",
+       "start": 736,
+       "end": 745
+      },
+      {
+       "number": "18.7",
+       "title": "Artificial Neural Networks",
+       "start": 746,
+       "end": 755
+      },
+      {
+       "number": "18.8",
+       "title": "Nonparametric Models",
+       "start": 756,
+       "end": 762
+      },
+      {
+       "number": "18.9",
+       "title": "Support Vector Machines",
+       "start": 763,
+       "end": 766
+      },
+      {
+       "number": "18.10",
+       "title": "Ensemble Learning",
+       "start": 767,
+       "end": 771
+      },
+      {
+       "number": "18.11",
+       "title": "Practical Machine Learning",
+       "start": 772,
+       "end": 786
+      }
+     ],
+     "end": 786
+    },
+    {
+     "id": 19,
+     "number": "19",
+     "title": "Knowledge in Learning",
+     "start": 787,
+     "sections": [
+      {
+       "number": "19.1",
+       "title": "ALogical Formulation of Learning",
+       "start": 787,
+       "end": 795
+      },
+      {
+       "number": "19.2",
+       "title": "Knowledge in Learning",
+       "start": 796,
+       "end": 798
+      },
+      {
+       "number": "19.3",
+       "title": "Explanation-Based Learning",
+       "start": 799,
+       "end": 802
+      },
+      {
+       "number": "19.4",
+       "title": "Learning Using Relevance Information",
+       "start": 803,
+       "end": 806
+      },
+      {
+       "number": "19.5",
+       "title": "Inductive Logic Programming",
+       "start": 807,
+       "end": 820
+      }
+     ],
+     "end": 820
+    },
+    {
+     "id": 20,
+     "number": "20",
+     "title": "Learning Probabilistic Models",
+     "start": 821,
+     "sections": [
+      {
+       "number": "20.1",
+       "title": "Statistical Learning",
+       "start": 821,
+       "end": 824
+      },
+      {
+       "number": "20.2",
+       "title": "Learning with Complete Data",
+       "start": 825,
+       "end": 834
+      },
+      {
+       "number": "20.3",
+       "title": "Learning with Hidden Variables: The EM Algorithm",
+       "start": 835,
+       "end": 848
+      }
+     ],
+     "end": 848
+    },
+    {
+     "id": 21,
+     "number": "21",
+     "title": "Reinforcement Learning",
+     "start": 849,
+     "sections": [
+      {
+       "number": "21.1",
+       "title": "Introduction",
+       "start": 849,
+       "end": 850
+      },
+      {
+       "number": "21.2",
+       "title": "Passive Reinforcement Learning",
+       "start": 851,
+       "end": 857
+      },
+      {
+       "number": "21.3",
+       "title": "Active Reinforcement Learning",
+       "start": 858,
+       "end": 863
+      },
+      {
+       "number": "21.4",
+       "title": "Generalization in Reinforcement Learning",
+       "start": 864,
+       "end": 866
+      },
+      {
+       "number": "21.5",
+       "title": "Policy Search",
+       "start": 867,
+       "end": 868
+      },
+      {
+       "number": "21.6",
+       "title": "Applications of Reinforcement Learning",
+       "start": 869,
+       "end": 878
+      }
+     ],
+     "end": 878
+    }
+   ]
+  },
+  {
+   "name": "Part VI: Communicating, perceiving, and acting",
+   "chapters": [
+    {
+     "id": 22,
+     "number": "22",
+     "title": "Natural Language Processing",
+     "start": 879,
+     "sections": [
+      {
+       "number": "22.1",
+       "title": "Language Models",
+       "start": 879,
+       "end": 883
+      },
+      {
+       "number": "22.2",
+       "title": "Text Classification",
+       "start": 884,
+       "end": 885
+      },
+      {
+       "number": "22.3",
+       "title": "Information Retrieval",
+       "start": 886,
+       "end": 891
+      },
+      {
+       "number": "22.4",
+       "title": "Information Extraction",
+       "start": 892,
+       "end": 906
+      }
+     ],
+     "end": 906
+    },
+    {
+     "id": 23,
+     "number": "23",
+     "title": "Natural Language for Communication",
+     "start": 907,
+     "sections": [
+      {
+       "number": "23.1",
+       "title": "Phrase Structure Grammars",
+       "start": 907,
+       "end": 910
+      },
+      {
+       "number": "23.2",
+       "title": "Syntactic Analysis (Parsing)",
+       "start": 911,
+       "end": 915
+      },
+      {
+       "number": "23.3",
+       "title": "Augmented Grammars and Semantic Interpretation",
+       "start": 916,
+       "end": 925
+      },
+      {
+       "number": "23.4",
+       "title": "Machine Translation",
+       "start": 926,
+       "end": 930
+      },
+      {
+       "number": "23.5",
+       "title": "Speech Recognition",
+       "start": 931,
+       "end": 946
+      }
+     ],
+     "end": 946
+    },
+    {
+     "id": 24,
+     "number": "24",
+     "title": "Perception",
+     "start": 947,
+     "sections": [
+      {
+       "number": "24.1",
+       "title": "Image Formation",
+       "start": 948,
+       "end": 953
+      },
+      {
+       "number": "24.2",
+       "title": "Early Image-Processing Operations",
+       "start": 954,
+       "end": 960
+      },
+      {
+       "number": "24.3",
+       "title": "Object Recognition by Appearance",
+       "start": 961,
+       "end": 965
+      },
+      {
+       "number": "24.4",
+       "title": "Reconstructing the 3D World",
+       "start": 966,
+       "end": 975
+      },
+      {
+       "number": "24.5",
+       "title": "Object Recognition from Structural Information",
+       "start": 976,
+       "end": 979
+      },
+      {
+       "number": "24.6",
+       "title": "Using Vision",
+       "start": 980,
+       "end": 989
+      }
+     ],
+     "end": 989
+    },
+    {
+     "id": 25,
+     "number": "25",
+     "title": "Robotics",
+     "start": 990,
+     "sections": [
+      {
+       "number": "25.1",
+       "title": "Introduction",
+       "start": 990,
+       "end": 991
+      },
+      {
+       "number": "25.2",
+       "title": "Robot Hardware",
+       "start": 992,
+       "end": 996
+      },
+      {
+       "number": "25.3",
+       "title": "Robotic Perception",
+       "start": 997,
+       "end": 1004
+      },
+      {
+       "number": "25.4",
+       "title": "Planning to Move",
+       "start": 1005,
+       "end": 1011
+      },
+      {
+       "number": "25.5",
+       "title": "Planning Uncertain Movements",
+       "start": 1012,
+       "end": 1015
+      },
+      {
+       "number": "25.6",
+       "title": "Moving",
+       "start": 1016,
+       "end": 1021
+      },
+      {
+       "number": "25.7",
+       "title": "Robotic Software Architectures",
+       "start": 1022,
+       "end": 1024
+      },
+      {
+       "number": "25.8",
+       "title": "Application Domains",
+       "start": 1025,
+       "end": 1038
+      }
+     ],
+     "end": 1038
+    }
+   ]
+  },
+  {
+   "name": "Part VII: Conclusions",
+   "chapters": [
+    {
+     "id": 26,
+     "number": "26",
+     "title": "Philosophical Foundations",
+     "start": 1039,
+     "sections": [
+      {
+       "number": "26.1",
+       "title": "Weak AI: Can Machines Act Intelligently?",
+       "start": 1039,
+       "end": 1044
+      },
+      {
+       "number": "26.2",
+       "title": "Strong AI: Can Machines Really Think?",
+       "start": 1045,
+       "end": 1052
+      },
+      {
+       "number": "26.3",
+       "title": "The Ethics and Risks of Developing Artificial Intelligence",
+       "start": 1053,
+       "end": 1062
+      }
+     ],
+     "end": 1062
+    },
+    {
+     "id": 27,
+     "number": "27",
+     "title": "AI: The Present and Future",
+     "start": 1063,
+     "sections": [
+      {
+       "number": "27.1",
+       "title": "Agent Components",
+       "start": 1063,
+       "end": 1065
+      },
+      {
+       "number": "27.2",
+       "title": "Agent Architectures",
+       "start": 1066,
+       "end": 1067
+      },
+      {
+       "number": "27.3",
+       "title": "Are We Going in the Right Direction?",
+       "start": 1068,
+       "end": 1069
+      },
+      {
+       "number": "27.4",
+       "title": "What If AI Does Succeed?",
+       "start": 1070,
+       "end": 1071
+      }
+     ],
+     "end": 1071
+    }
+   ]
+  },
+  {
+   "name": "Appendix A: Mathematical background",
+   "chapters": [
+    {
+     "id": 28,
+     "number": "A",
+     "title": "Mathematical background",
+     "start": 1072,
+     "sections": [
+      {
+       "number": "A.1",
+       "title": "Complexity Analysis and O() Notation",
+       "start": 1072,
+       "end": 1073
+      },
+      {
+       "number": "A.2",
+       "title": "Vectors, Matrices, and Linear Algebra",
+       "start": 1074,
+       "end": 1075
+      },
+      {
+       "number": "A.3",
+       "title": "Probability Distributions",
+       "start": 1076,
+       "end": 1078
+      }
+     ],
+     "end": 1078
+    }
+   ]
+  },
+  {
+   "name": "Appendix B: Notes on Languages and Algorithms",
+   "chapters": [
+    {
+     "id": 29,
+     "number": "B",
+     "title": "Notes on Languages and Algorithms",
+     "start": 1079,
+     "sections": [
+      {
+       "number": "B.1",
+       "title": "Defining Languages with Backus\u2013Naur Form (BNF)",
+       "start": 1079,
+       "end": 1079
+      },
+      {
+       "number": "B.2",
+       "title": "Describing Algorithms with Pseudocode",
+       "start": 1080,
+       "end": 1080
+      },
+      {
+       "number": "B.3",
+       "title": "Online Help",
+       "start": 1081,
+       "end": 1081
+      }
+     ],
+     "end": 1081
+    }
+   ]
+  }
+ ],
+ "content_pages": [
+  20,
+  1081
+ ]
+}

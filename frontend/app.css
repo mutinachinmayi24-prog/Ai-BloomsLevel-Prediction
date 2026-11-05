@@ -168,3 +168,30 @@ blockquote{margin:8px 0;padding:6px 12px;border-left:2px solid var(--border-stro
 .docbar{display:none;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:10px;margin-bottom:8px;background:var(--accent-soft);color:var(--accent);font-size:13px}
 .docbar.on{display:flex}.docbar b{color:var(--text);font-weight:600;word-break:break-all}
 .dots-l{margin-left:8px;color:var(--text-3);font-size:13px}
+
+/* ---------- question-paper builder ---------- */
+.plabel{font-weight:600;margin:14px 0 8px;font-size:13.5px}.plabel .muted{font-weight:400}
+.pgroup{margin-bottom:10px}.pg-title{font-size:11.5px;color:var(--text-3);margin-bottom:5px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1px solid var(--border-strong);background:var(--surface);color:var(--text-2);padding:5px 11px;border-radius:99px;font-size:12.5px;cursor:pointer;transition:.12s}
+.pill:hover{border-color:var(--accent);color:var(--accent)}.pill.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.tbl .c{text-align:center}.tbl.plan td.c-q{min-width:150px;font-weight:500}
+input.cnt{width:52px;padding:5px 4px;text-align:center;border:1px solid var(--border-strong);border-radius:6px;background:var(--surface);color:var(--text)}
+input.cnt:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.plan-bar{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-top:14px}
+.plan-bar label{display:block}.plan-marks{width:150px;margin-top:4px}.plan-hint{margin-top:10px}
+.sec{margin:16px 0 2px;padding-top:12px;border-top:1px solid var(--border);font-weight:600}.sec:first-of-type{border-top:0;padding-top:4px}
+.bp{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bp .badge{margin:0;height:auto;padding:3px 9px;line-height:1.4}
+.tiles .tile:last-child:nth-child(odd){grid-column:1/-1}
+
+/* ---------- the full syllabus in the paper builder: unit > chapter > subtopic ---------- */
+.plan-tools{display:flex;gap:8px;align-items:center;margin:6px 0 4px;flex-wrap:wrap}.plan-filter{flex:1;min-width:180px;height:32px;padding:4px 10px}
+.plan-count{margin:2px 0 8px}
+.plan-topics{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px 12px;background:var(--surface-2)}
+details.unit{margin:6px 0}.unit-h{font-weight:600;cursor:pointer;padding:4px 0;font-size:13px}
+details.chap,div.chap{margin:4px 0 4px 8px}details.chap>summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;padding:2px 0}
+.pills.sub{margin:6px 0 6px 20px}.pill-ch{font-weight:600}.flt-hide{display:none!important}
+
+.score.na{font-size:20px;line-height:1.3;color:var(--text-3);font-weight:600;letter-spacing:0}
+
+.branch{margin-top:6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;opacity:.8}

@@ -23,6 +23,7 @@
         <div class="tiles">
           <button class="tile" data-send="Generate questions" data-label="Generate questions"><div class="ti" data-icon="spark" data-size="18"></div><b>Generate questions</b><span>Pick a topic, Bloom level and difficulty. I'll ask what I need.</span></button>
           <button class="tile" data-send="What level is: Define what makes a heuristic function admissible in A* search." data-label="What level is: Define what makes a heuristic function admissible in A* search."><div class="ti" data-icon="chart" data-size="18"></div><b>Predict a question's level</b><span>Paste a question, then upgrade or degrade it.</span></button>
+          <button class="tile" data-send="Create a question paper" data-label="Create a question paper"><div class="ti" data-icon="tools" data-size="18"></div><b>Build a question paper</b><span>Choose several topics and how many questions you want at each Bloom level.</span></button>
           <button class="tile pick" data-pick="1"><div class="ti" data-icon="clip" data-size="18"></div><b>Scan a question paper</b><span>PDF, Word or a photo. Scans are read with OCR and every question gets a Bloom level.</span></button>
           <button class="tile pick" data-pick="1"><div class="ti" data-icon="file" data-size="18"></div><b>Make questions from my notes</b><span>Upload slides, a Word file or a PDF, then tell me the format you need.</span></button>
         </div>
@@ -54,7 +55,8 @@ function addUser(t){msgs.insertAdjacentHTML("beforeend",`<div class="msg user"><
 function addBot(res){
   const blocks=(res.blocks||[]).map(b=>R[b.type]?R[b.type](b.data):"").join("");
   const chips=(res.suggestions||[]).map(s=>`<button class="btn sm" data-send="${esc(s.text)}" data-label="${esc(s.label)}">${s.icon?icon(s.icon,14):""}${esc(s.label)}</button>`).join("");
-  msgs.insertAdjacentHTML("beforeend",`<div class="msg bot"><div class="avatar">${icon("mark",16)}</div><div class="body"><div class="txt">${fmt(res.reply)}</div>${blocks}${chips?`<div class="chips">${chips}</div>`:""}</div></div>`);
+  msgs.insertAdjacentHTML("beforeend",`<div class="msg bot"><div class="avatar">${icon("mark",16)}</div><div class="body"><div class="txt">${fmt(res.reply)}</div>${blocks}${res.branch?`<div class="muted sm branch" title="The conditional branch the bot took">branch: ${esc(res.branch)}</div>`:""}${chips?`<div class="chips">${chips}</div>`:""}</div></div>`);
+  QS.initPlanners(msgs.lastElementChild);
   refreshWelcome();scrollToStart(msgs.lastElementChild);
 }
 function typing(on,label){const el=$("typing");
@@ -104,7 +106,7 @@ $("dropdoc").onclick=()=>send("forget the document","Remove the document");
 document.addEventListener("click",e=>{
   if(e.target.closest("[data-pick]")){$("file").click();return}
   const b=e.target.closest("[data-send]");if(b)send(b.dataset.send,b.dataset.label)});
-document.addEventListener("qs:prompt",e=>send(e.detail));
+document.addEventListener("qs:prompt",e=>{const d=e.detail;typeof d==="string"?send(d):send(d.text,d.label)});
 document.addEventListener("qs:newchat",reset);
 let dragN=0;
 window.addEventListener("dragenter",e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes("Files")){dragN++;$("drop").classList.add("on")}});
@@ -114,6 +116,7 @@ window.addEventListener("drop",e=>{e.preventDefault();dragN=0;$("drop").classLis
 
 const params=new URLSearchParams(location.search);
 if(params.get("new"))reset();else restore();
+QS.initPlanners(msgs);
 syncBar();refreshWelcome();scroll();
 if(params.get("q"))send(params.get("q"));
 if(params.toString())history.replaceState(null,"","/");

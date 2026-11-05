@@ -5,7 +5,7 @@ try:
 except ImportError:
     pass
 import json
-import engine, llm, chat, paper, docs, docgen, ocr
+import engine, llm, chat, paper, docs, docgen, ocr, guard, syllabus, branching
 
 app = Flask(__name__, static_folder=str(pathlib.Path(__file__).parent.parent / "frontend"), static_url_path="")
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024      # slides and scanned papers can be large; 20 MB is generous
@@ -29,6 +29,27 @@ def body(*req):
         if not str(d.get(k, "")).strip():
             raise ValueError(f"'{k}' is required")
     return d
+
+
+def guarded(text, kind="question"):
+    """The same guardrails as the chat: injection screen, then subject check. Raises a polite 400 error."""
+    text = guard.clean(text)
+    d = guard.screen(text)
+    if d.allowed and kind == "topic":
+        t = guard.assess_topics(text)
+        if t["invalid"]:
+            inv = " and ".join(i["text"][:1].upper() + i["text"][1:] for i in t["invalid"])
+            ok = ", ".join(v["text"] for v in t["valid"])
+            raise ValueError(f"{inv} {'is' if len(t['invalid']) == 1 else 'are'} outside the supported syllabus. " +
+                             (f"Please resend with only the supported topic(s): {ok}." if ok else "Please enter a relevant AI topic."))
+        valid = guard.distinct_topics(t["valid"])
+        if len(valid) > 1:                                    # one topic at a time (same rule as the chat)
+            raise ValueError(branching.multiple_topics_reply([v["text"] for v in valid]).replace("**", ""))
+    if d.allowed and kind != "topic":
+        d = guard.check_scope(text, None, kind)
+    if not d.allowed:
+        raise ValueError(d.message)
+    return text
 
 
 def read_upload():
@@ -73,30 +94,35 @@ def upload():
 # ---------------- classic page
 @app.post("/api/predict")
 def predict():
-    return jsonify(engine.predict(body("question")["question"]))
+    return jsonify(engine.predict(guarded(body("question")["question"])))
 
 
 @app.post("/api/evaluate-question")
 def eq():
-    return jsonify(engine.evaluate_question(body("question")["question"]))
+    return jsonify(engine.evaluate_question(guarded(body("question")["question"])))
 
 
 @app.post("/api/upgrade")
 def up():
     d = body("question")
     fn = engine.degrade if d.get("direction") == "down" else engine.upgrade
-    return jsonify(fn(d["question"], d.get("target_level")))
+    return jsonify(fn(guarded(d["question"]), d.get("target_level")))
 
 
 @app.post("/api/generate")
 def gen():
     d = body("topic")
-    return jsonify(engine.generate(d["topic"], d.get("level"), d.get("difficulty"), int(d.get("n", 5))))
+    return jsonify(engine.generate(guarded(d["topic"], "topic"), d.get("level"), d.get("difficulty"), int(d.get("n", 5))))
 
 
 @app.post("/api/analyze-paper")
 def analyze_paper():
     return jsonify(paper.analyze_doc(read_upload()))
+
+
+@app.get("/api/syllabus")
+def syllabus_api():
+    return jsonify(units=syllabus.tree(), chapters=len(syllabus.CHAPTERS), sections=len(syllabus.SECTIONS))
 
 
 # ---------------- downloads

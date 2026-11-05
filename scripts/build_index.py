@@ -3,15 +3,20 @@ Usage: python scripts/build_index.py path/to/textbook.pdf
 """
 import re, sys, json, subprocess, joblib, pathlib
 from sklearn.feature_extraction.text import TfidfVectorizer
-import fitz  # PyMuPDF
 
 pdf = sys.argv[1]
 out = pathlib.Path(__file__).resolve().parent.parent / "backend" / "data"
-pages = [p.get_text() for p in fitz.open(pdf)]
+try:                                                       # PyMuPDF if installed (works on Windows), else the pdftotext tool
+    import pymupdf
+    pages = [p.get_text() for p in pymupdf.open(pdf)]
+except ImportError:
+    pages = subprocess.run(["pdftotext", "-layout", pdf, "-"], capture_output=True, text=True).stdout.split("\f")
+syl = out / "syllabus.json"                                # the real content range comes from the textbook's table of contents
+LO, HI = json.load(open(syl))["content_pages"] if syl.exists() else (30, 1060)
 
 chunks, buf, start = [], "", None
 for i, pg in enumerate(pages, 1):
-    if i < 30 or i > 1060:          # skip front matter, bibliography, index
+    if i < LO or i > HI:            # skip front matter, bibliography, index
         continue
     pg = re.sub(r"[ \t]+", " ", pg)
     pg = re.sub(r"\n\s*\n+", "\n", pg).strip()
