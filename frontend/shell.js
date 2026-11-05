@@ -37,6 +37,7 @@
   const tone = g => ({ Excellent: "ok", Good: "ok", "Needs work": "warn", Weak: "bad" }[g] || "");
   const sbtn = (ic, label, text, shown) => `<button class="btn sm" data-send="${esc(text)}" data-label="${esc(shown || label)}">${icon(ic, 14)}${esc(label)}</button>`;
   const conf = p => `<div class="muted sm" style="margin-top:6px">${Math.round(p.level_confidence * 100)}% confidence</div>`;
+  const topicBadge = q => q.topic_match == null ? "" : `<span class="badge ${{ Strong: "d-easy", Moderate: "d-medium", Weak: "d-hard" }[q.topic_band] || ""}" title="Bag-of-words relevance to the topic ${esc(q.topic_name || "")}">Topic match ${q.topic_match}%</span>`;
   const warnBox = t => `<div class="callout warn"><div class="head">${icon("warn", 15)}Notice</div><p>${esc(t)}</p></div>`;
 
   const R = {
@@ -45,17 +46,21 @@
       const bandCls = { Strong: "d-easy", Moderate: "d-medium", Weak: "d-hard" }[f.band] || "";
       return `<section class="card">
       <div class="split">
-        <div><div class="label">Keyword relevance</div>${ok ? `<div class="score">${f.score}<small>%</small> <span class="badge ${bandCls}" style="vertical-align:middle">${esc(f.band)}</span></div>` : `<div class="score na">Not evaluated</div>`}
+        <div><div class="label">${esc(f.metric || "Keyword relevance")}${ev && ev.given_topic ? ` · ${esc(ev.given_topic)}` : ""}</div>${ok ? `<div class="score">${f.score}<small>%</small> <span class="badge ${bandCls}" style="vertical-align:middle">${esc(f.band)}</span></div>` : `<div class="score na">Not evaluated</div>`}
           <div class="muted sm" style="margin-top:6px;max-width:34em">${esc(ok ? f.method : f.reason || "No reliable evaluation was possible.")}</div></div>
         <div><div class="label">Predicted level</div>${lvBadge(r.prediction)}${conf(r.prediction)}</div>
       </div>
       <div class="muted sm" style="margin-top:12px">${esc(f.explains)}</div>
       ${f.note ? warnBox(f.note) : ""}
       ${ev && ev.kept ? `<details open><summary>How the score was calculated</summary>
+        <div class="qm"><b class="sm">0. Unwanted phrases removed:</b> ${chips(ev.phrases, "")}</div>
         <div class="qm"><b class="sm">1. Common words removed:</b> ${chips(ev.removed, "")}</div>
         <div class="qm"><b class="sm">2. Keywords kept:</b> ${ok ? (ev.terms || []).map(t => `<span class="badge ${t.support >= 0.65 ? "d-easy" : t.support > 0 ? "d-medium" : "d-hard"}" title="${esc(t.why)}">${esc(t.term)}</span>`).join("") : chips(ev.kept, "")}</div>
-        ${ok ? `<div class="qm"><b class="sm">3. Best matching topic:</b> ${esc(ev.topic)} <span class="muted sm">(${esc(ev.source)})</span></div>
-        <div class="qm"><b class="sm">4. Focus on one topic:</b> ${Math.round(ev.focus * 100)}% <span class="muted sm">· green = strongly tied to the topic, amber = general word, red = not in the syllabus</span></div>` : ""}</details>` : ""}
+        ${ok ? (ev.given_topic
+          ? `<div class="qm"><b class="sm">3. Topic checked:</b> ${esc(ev.given_topic)} <span class="muted sm">(bag of words from ${esc(ev.source)})</span></div>
+        <div class="qm"><b class="sm">4. Topic name found in the question:</b> ${chips(ev.name_found, "d-easy")} <span class="muted sm">· green = belongs to the topic, amber = general word, red = not part of this topic</span></div>`
+          : `<div class="qm"><b class="sm">3. Best matching topic:</b> ${esc(ev.topic)} <span class="muted sm">(${esc(ev.source)})</span></div>
+        <div class="qm"><b class="sm">4. Focus on one topic:</b> ${Math.round(ev.focus * 100)}% <span class="muted sm">· green = strongly tied to the topic, amber = general word, red = not in the syllabus</span></div>`) : ""}</details>` : ""}
       ${scale(r.prediction.level, r.prediction.next_level)}
       ${r.suggestions.length ? `<div class="label mt">Writing tips</div><ul class="clean">${r.suggestions.map(s => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
       ${r.ai_review ? `<div class="callout ok"><div class="head">AI review</div><p>${esc(r.ai_review.verdict)}</p><div class="rewrite">${esc(r.ai_review.improved)}</div></div>` : ""}
@@ -77,7 +82,7 @@
       <div class="label">Generated questions · source: ${esc(r.source)}${r.filtered_out ? ` · ${r.filtered_out} off-style filtered out` : ""}</div>
       ${r.note ? warnBox(r.note) : ""}
       ${r.questions.map((x, i) => `<div class="qrow"><div class="qn">${i + 1}</div><div style="min-width:0">
-        <div class="qt">${esc(x.question)}</div><div class="qm">${lvBadge(x)}</div>
+        <div class="qt">${esc(x.question)}</div><div class="qm">${lvBadge(x)}${topicBadge(x)}</div>
         ${o.actions !== false ? `<div class="acts">${sbtn("chart", "Evaluate", "/evaluate " + x.question, "Evaluate question " + (i + 1))}${sbtn("up", "Upgrade", "/upgrade " + x.question, "Upgrade question " + (i + 1))}${sbtn("down", "Degrade", "/degrade " + x.question, "Degrade question " + (i + 1))}</div>` : ""}
         </div></div>`).join("")}</section>`
   };
@@ -120,7 +125,7 @@
       return head + `<div class="qrow"><div class="qn">${q.no}</div><div style="min-width:0;flex:1">
         <div class="qt">${esc(q.question)}</div>
         ${q.options ? `<ul class="opts">${q.options.map((o, i) => `<li>${"ABCD"[i]}) ${esc(o)}</li>`).join("")}</ul>` : ""}
-        <div class="qm"><span class="badge lv"><span class="lvdot" style="background:var(--l${li(q.level)});margin-right:6px"></span>${esc(q.level)}</span><span class="badge d-${String(q.difficulty).toLowerCase()}">${esc(q.difficulty)}</span>${built ? "" : `<span class="badge">${esc(q.type)}</span>`}<span class="badge">${q.marks} mark${q.marks === 1 ? "" : "s"}</span>${q.source && !built ? `<span class="badge">${esc(q.source)}</span>` : ""}</div>
+        <div class="qm"><span class="badge lv"><span class="lvdot" style="background:var(--l${li(q.level)});margin-right:6px"></span>${esc(q.level)}</span><span class="badge d-${String(q.difficulty).toLowerCase()}">${esc(q.difficulty)}</span>${built ? "" : `<span class="badge">${esc(q.type)}</span>`}<span class="badge">${q.marks} mark${q.marks === 1 ? "" : "s"}</span>${topicBadge(q)}${q.source && !built ? `<span class="badge">${esc(q.source)}</span>` : ""}</div>
         ${q.answer || q.reference ? `<details><summary>${q.answer ? "Model answer" : "Reference from your document"}</summary><p style="margin:6px 0 0;color:var(--text-2)">${esc(q.answer || q.reference)}</p></details>` : ""}
         ${act ? `<div class="acts">${sbtn("up", "Upgrade", "/upgrade " + q.question, "Upgrade question " + q.no)}${sbtn("down", "Degrade", "/degrade " + q.question, "Degrade question " + q.no)}</div>` : ""}
         </div></div>`;

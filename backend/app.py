@@ -99,7 +99,9 @@ def predict():
 
 @app.post("/api/evaluate-question")
 def eq():
-    return jsonify(engine.evaluate_question(guarded(body("question")["question"])))
+    d = body("question")
+    topic = guarded(d["topic"], "topic") if str(d.get("topic") or "").strip() else None      # optional: check the question against THIS topic name
+    return jsonify(engine.evaluate_question(guarded(d["question"]), None, topic))
 
 
 @app.post("/api/upgrade")

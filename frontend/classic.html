@@ -23,6 +23,7 @@
 
       <section id="t-eval" class="tab-pane"><div class="panel"><h3>Evaluate a question</h3><p class="desc">Get a quality score, the predicted Bloom level and suggestions.</p>
         <div class="field"><label for="eq">Question</label><textarea class="input" id="eq" placeholder="e.g. Define what makes a heuristic function admissible in A* search."></textarea></div>
+        <div class="field"><label for="et">Topic name (optional)</label><input class="input" id="et" placeholder="e.g. A* search — checks whether the question is about this topic"></div>
         <button class="btn primary" id="b-eval">Evaluate and predict level</button></div><div id="eq-out"></div></section>
 
       <section id="t-up" class="tab-pane" hidden><div class="panel"><h3>Predict, then upgrade or degrade</h3><p class="desc">Predicts the Bloom level and rewrites the question at a higher (harder) or lower (easier) level.</p>
@@ -52,7 +53,7 @@ async function api(path,body,btn,out){
     const j=await r.json();if(!r.ok)throw new Error(j.error||r.statusText);return j}
   catch(e){$(out).innerHTML=`<div class="callout warn err"><div class="head">${icon("warn",15)}Error</div><p>${esc(e.message)}</p></div>`;return null}
   finally{btn.disabled=false;btn.textContent=old}}
-$("b-eval").onclick=async e=>{const r=await api("evaluate-question",{question:$("eq").value},e.currentTarget,"eq-out");if(!r)return;
+$("b-eval").onclick=async e=>{const r=await api("evaluate-question",{question:$("eq").value,topic:$("et").value},e.currentTarget,"eq-out");if(!r)return;
   $("eq-out").innerHTML=R.evaluation(r)+`<div style="margin-top:12px"><button class="btn sm" id="to-up" data-icon="up" data-size="14">Upgrade this question</button></div>`;
   const b=$("to-up");b.insertAdjacentHTML("afterbegin",icon("up",14));b.onclick=()=>{$("uq").value=$("eq").value;tab("t-up");$("b-up").click()}};
 $("b-up").onclick=async e=>{const r=await api("upgrade",{question:$("uq").value,target_level:$("ut").value||null,direction:$("ud").value},e.currentTarget,"up-out");if(r)$("up-out").innerHTML=R.upgrade(r)};

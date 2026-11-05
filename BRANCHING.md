@@ -10,6 +10,23 @@
 Bands: Strong >= 65, Moderate 40-64, Weak < 40. If no keyword is left, the result is "not evaluated" with a reason (no invented number).
 The older faithfulness check is still computed (`evaluator.faithfulness`) and shown only as a supporting check.
 
+### Unwanted phrases (step 0)
+Before the word bag is made, exam boilerplate is cut out of the sentence (`evaluator.UNWANTED_PHRASES`): *in your own words*, *with the help of a neat diagram*,
+*with a suitable example*, *write short notes on*, *in detail*, *what is meant by*, *justify your answer*, *the concept / role / working of*, marks and [CO/BL] tags.
+So words like *neat*, *diagram*, *notes* and *words* can no longer pose as subject keywords.
+
+### Topic relevance: is the question about a GIVEN topic name? (`evaluator.evaluate(q, doc, topic)`)
+1. Unwanted phrases and common words are removed; words of the topic name are always kept (*test* in *Turing test*).
+2. The topic name is located: a section of the uploaded file, else the textbook. If the name is the title of exactly one section (e.g. *Decision trees* -> 18.3),
+   that section's own bag of words is used and the rest of its chapter gets 60% credit; otherwise the whole chapter's bag is used.
+3. Each keyword is scored against that bag (1.0 part of the topic name, 0.5 a general word of the name such as *learning*, then the support levels above), weighted by rarity.
+4. Score = weighted support (x specificity if the topic is not named), plus a bonus for naming the topic; rare name words count more.
+   Same bands. A Weak result says which topic the keywords point to instead.
+
+Where it is used: the **Classic page** has an optional *Topic name* field; in the **chat**, evaluating a generated question checks it against the topic it was generated for;
+and every **generated question** (chat, Classic page, question-paper builder) is validated with it: Weak questions are dropped, the most related come first,
+and each question shows its *Topic match* score. Tests: `python tests/test_topic_relevance.py` (24 checks).
+
 ## 2. One topic at a time
 * Generation request with several syllabus topics -> *"There is more than one topic in your prompt: A and B. I work on one topic at a time, so which one do you want to continue on?"* Buttons offer each topic; nothing is generated until one is chosen. "both / all" is asked again.
 * A pasted question whose clauses point to different topics gets the same question (`evaluator.topic_spread`); after the choice, only that topic's clause is analysed.

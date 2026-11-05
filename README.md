@@ -46,3 +46,7 @@ The question-paper builder lists every unit, chapter and subtopic found in `syll
 
 ## New: keyword relevance, one-topic rule, conditional branching
 See `BRANCHING.md`. The evaluation metric is now a bag-of-words **keyword relevance** score; a prompt with more than one topic makes the bot ask which one to continue on; every chat reply reports the conditional branch it took. Run `python tests/test_branching.py` to verify.
+
+## New: unwanted-phrase removal and topic relevance
+Exam boilerplate ("in your own words", "with a neat diagram", "write short notes on"...) is removed before the bag of words is made, and a question can be checked
+against a **topic name** (is it about *that* topic?). Generated questions are validated this way and show a *Topic match* score. See `BRANCHING.md`; run `python tests/test_topic_relevance.py`.

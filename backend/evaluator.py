@@ -207,7 +207,7 @@ def _build():
     for c in syllabus.CHAPTERS:
         cnt = collections.Counter(_rstem(w) for k in c["chunks"] for w in _bag(engine._chunks[k]["text"]) if not _is_common(w))
         total.update(cnt)
-        topics.append({"name": c["title"], "ref": f"AIMA chapter {c.get('number', c['id'])}", "cnt": cnt, "size": sum(cnt.values()) or 1,
+        topics.append({"id": c["id"], "name": c["title"], "ref": f"AIMA chapter {c.get('number', c['id'])}", "cnt": cnt, "size": sum(cnt.values()) or 1,
                        "title": {_rstem(w) for w in _bag(c["title"]) if not _is_common(w)},
                        "secs": {_rstem(w) for s in c["sections"] for w in _bag(s["title"]) if not _is_common(w)},
                        "kw": {_rstem(x) for k in c["keywords"] for x in _bag(k)}, "general": False, "appendix": str(c.get("group", "")).startswith("Appendix")})
@@ -256,12 +256,54 @@ def _support(w, t, total, size):
     return 0.0, "not found in the syllabus"
 
 
-def keywords(question):
-    """-> (keywords kept, common terms removed).  Both are lists of the question's own words, in order."""
+# Step 0: UNWANTED PHRASES. Exam boilerplate that says how to answer, not what the question is about.
+# They are cut out of the sentence BEFORE the word bag is made, so 'neat', 'diagram', 'words', 'notes' never pose as subject keywords.
+_ADJ = r"(?:neat|suitable|appropriate|relevant|simple|clear|proper|labell?ed|neatly\s+labell?ed|real[- ]world|real[- ]life|practical|small|brief|detailed)"
+_AID = r"(?:diagrams?|sketch(?:es)?|examples?|illustrations?|figures?|case\s+stud(?:y|ies)|flow\s*charts?)"
+UNWANTED_PHRASES = [
+    r"[\[(]\s*(?:co|po|bl|btl|rbt|l|k)\s*-?\s*\d[^\])]{0,20}[\])]",                      # [CO2, L3] / (BL4) tags
+    r"\(?\b\d{1,2}\s*(?:marks?|m)\b\)?",                                                   # (5 marks)
+    r"\bin\s+your\s+own\s+words\b",
+    rf"\b(?:with|using)\s+(?:the\s+)?(?:help|aid)\s+of\s+(?:(?:a|an|the|some)\s+)?(?:{_ADJ}\s+)*{_AID}",
+    rf"\b(?:with|using|giving|by\s+giving|by\s+taking|taking)\s+(?:(?:a|an|the|some)\s+)?(?:{_ADJ}\s+)*{_AID}",
+    rf"\b(?:draw|give|cite|provide|include)\s+(?:(?:a|an|the|some)\s+)?(?:{_ADJ}\s+)*{_AID}",
+    rf"\b(?:{_ADJ}\s+)+{_AID}",
+    r"\b(?:write\s+)?(?:(?:a|an)\s+)?(?:short|brief)\s+notes?\s+(?:on|about)\b",
+    r"\b(?:in|with)\s+(?:great\s+|full\s+|more\s+)?details?\b|\bin\s+brief\b|\bin\s+short\b|\bbriefly\b|\bstep[- ]by[- ]step\b|\bclearly\b",
+    r"\bwhat\s+(?:do\s+you\s+(?:mean|understand)\s+by|is\s+meant\s+by|is\s+the\s+meaning\s+of)\b",
+    r"\b(?:justify|explain|support)\s+your\s+(?:answer|choice|reasoning)\b|\bgive\s+reasons?(?:\s+for\s+your\s+answer)?\b",
+    r"\b(?:the\s+)?(?:concept|notion|idea|working|role|importance|significance|purpose|meaning|basics?|fundamentals?)\s+of\b",
+    r"\b(?:with\s+(?:respect|reference|regard)\s+to|in\s+the\s+context\s+of|in\s+relation\s+to)\b",
+]
+_UNWANTED = [re.compile(p, re.I) for p in UNWANTED_PHRASES]
+
+
+def unwanted_phrases(text):
+    """-> (text with the unwanted phrases cut out, [phrases removed])."""
+    t, found = _norm(text), []
+    for rx in _UNWANTED:
+        for m in rx.finditer(t):
+            p = m.group(0).strip(" ()[]")
+            if p and p not in found:
+                found.append(p)
+        t = rx.sub(" ", t)
+    return re.sub(r"\s+", " ", t).strip(), found
+
+
+def keywords(question, protect=()):
+    """-> (keywords kept, common terms removed).  Both are lists of the question's own words, in order.
+    Unwanted phrases are cut out first (their words are listed as removed).  Words in `protect` (the stems of the topic name) are always kept,
+    so 'test' survives in 'the Turing test' when the topic is the Turing test."""
     known = _build()["total"]
+    protect = set(protect)
+    body, phrases = unwanted_phrases(question)
     kept, removed, seen = [], [], set()
-    for w in _bag(question, known):
-        if _is_common(w):
+    for p in phrases:
+        for w in p.split():
+            if w not in removed:
+                removed.append(w)
+    for w in _bag(body, known):
+        if _is_common(w) and _rstem(w) not in protect:
             if w not in removed and w not in ("a*",):
                 removed.append(w)
             continue
@@ -313,8 +355,160 @@ def relevance(question, doc=None):
             "focus": round(best["focus"], 2), "focus_all": round(best["focus_all"], 2), "specificity": round(best["spec"], 2)}
 
 
-def evaluate(question, doc=None):
-    """The main evaluation metric.  -> {metric, score (0-100 or None), band, status ('ok' | 'not_evaluated'), method, reason, explains, evidence, note, topic}"""
+# ----------------------------------------------------------------- is the question related to a GIVEN topic name?
+TOPIC_EXPLAIN = ("Topic relevance checks whether the question is about the topic you named. Unwanted phrases (in your own words, with a neat diagram, "
+                 "write short notes on...) and common words are removed first; the remaining keywords are matched against the topic's bag of words "
+                 "(its name, its textbook chapter's title and section titles, and the words characteristic of that chapter). Rarer words count more.")
+NAME_STOP = set(ENGLISH_STOP_WORDS) | {"question", "questions", "topic", "topics", "chapter", "unit", "module"}
+
+
+def _name_stems(topic):
+    return {_rstem(w) for w in _bag(topic, _build()["total"]) if w not in NAME_STOP}
+
+
+_ENTRY = {}
+
+
+def topic_entry(topic, doc=None):
+    """Topic name -> (bag-of-words topic, its pool (topics, total, size), where it was found) for the topic_match metric.
+    The uploaded file's own sections are tried first, then the textbook (chapter or section title, then chapter keywords).  Cached per topic."""
+    key = (topic.strip().lower(), doc["id"] if doc is not None else None)
+    if key not in _ENTRY:
+        if len(_ENTRY) > 500:
+            _ENTRY.clear()
+        _ENTRY[key] = _topic_entry(topic, doc)
+    return _ENTRY[key]
+
+
+def _topic_entry(topic, doc=None):
+    names = _name_stems(topic)
+    if doc is not None and names:
+        d = _doc_topics(doc)
+        best = max(d["topics"], key=lambda t: len(names & t["title"]), default=None)
+        if best is not None and len(names & best["title"]) >= max(1, len(names) / 2):
+            return best, (d["topics"], d["total"], d["size"]), best["ref"]
+    import syllabus
+    loc = syllabus.locate(topic)
+    if loc:
+        B = _build()
+        t = next((x for x in B["topics"] if x["id"] == loc["chapter"]["id"]), None)
+        if t is None:
+            return None, None, None
+        title_stems = lambda s: {_rstem(w) for w in _bag(s) if not _is_common(w)}
+        holders = [x for x in loc["chapter"]["sections"] if names and names <= title_stems(x["title"])]
+        # the topic name is the title of exactly ONE section (and not of the chapter itself): use that section's own bag
+        if loc["kind"] == "section" and len(holders) == 1 and holders[0] is loc["node"] and not names <= title_stems(loc["chapter"]["title"]):
+            return _section_topic(loc["node"], t), (B["topics"], B["total"], B["size"]), syllabus.describe(loc)
+        return t, (B["topics"], B["total"], B["size"]), syllabus.describe({**loc, "kind": "chapter", "node": loc["chapter"]})
+    return None, None, None
+
+
+CHAPTER_SHARE = 0.6          # in a section-level topic, a word that belongs only to the rest of its chapter gets this share of its chapter support
+
+
+def _section_topic(sec, chapter_topic):
+    """Bag of words of ONE textbook section (cached).  'chapter' keeps the whole chapter's bag for partial credit."""
+    key = "sec:" + str(sec.get("id") or sec["number"])
+    if key not in _B:
+        import engine
+        cnt = collections.Counter(_rstem(w) for k in sec.get("chunks", []) for w in _bag(engine._chunks[k]["text"]) if not _is_common(w))
+        size, B = sum(cnt.values()) or 1, _build()
+        kw = {w for w, n in cnt.items() if n >= 3 and (n / size) / (B["total"][w] / B["size"]) >= 3.0}
+        _B[key] = {"id": chapter_topic["id"], "name": sec["title"], "ref": f"AIMA section {sec['number']}", "cnt": cnt, "size": size,
+                   "title": {_rstem(w) for w in _bag(sec["title"]) if not _is_common(w)}, "secs": set(), "kw": kw, "general": False, "chapter": chapter_topic}
+    return _B[key]
+
+
+def _topic_support(s, t, total, size):
+    """Support of a keyword for a topic; a section topic also gives partial credit for its chapter."""
+    sup = _support(s, t, total, size)
+    if t.get("chapter") is not None:
+        ch = _support(s, t["chapter"], total, size)
+        if CHAPTER_SHARE * ch[0] > sup[0]:
+            return round(CHAPTER_SHARE * ch[0], 2), ch[1].replace("the topic", "the chapter") + " (same chapter, other section)"
+    return sup
+
+
+def topic_match(question, topic, doc=None):
+    """Bag-of-words score of how related `question` is to the topic NAME the user gave (0-100).
+    -> {kept, removed, phrases, terms, score, topic, ref, name_found, name_cov} or {'terms': []} when no keyword is left."""
+    names = _name_stems(topic)
+    t, pool, where = topic_entry(topic, doc)
+    kept, removed = keywords(question, protect=names)
+    _, phrases = unwanted_phrases(question)
+    stems = [(w, _rstem(w)) for w in kept]
+    base_out = {"kept": kept, "removed": removed, "phrases": phrases, "topic": topic, "ref": where or "the topic name only"}
+    if not stems:
+        return {**base_out, "terms": []}
+    topics, total, size = pool if pool else (_build()["topics"], _build()["total"], _build()["size"])
+    w_ = {s: (_icf(s, topics) if pool else 1.0) for _, s in stems}
+    mass = sum(w_.values())
+    sup = {}
+    for _, s in stems:
+        if s in names and w_[s] >= COMMON_ICF:
+            sup[s] = (1.0, "part of the topic name")
+        elif s in names:                                              # 'learning' in 'reinforcement learning' is used in every chapter
+            sup[s] = (0.5, "general word of the topic name")
+        elif t is not None:
+            sup[s] = _topic_support(s, t, total, size)
+        else:
+            sup[s] = (0.0, "not in the topic name")
+    base = sum(w_[s] * sup[s][0] for _, s in stems) / mass
+    q_stems = {s for _, s in stems}
+    found = sorted(names & q_stems)
+    n_w = {s: (_icf(s, topics) if pool else 1.0) for s in names}
+    name_cov = sum(n_w[s] for s in found) / sum(n_w.values()) if names else 0.0      # rare name words count more ('reinforcement' > 'learning')
+    spec = 1.0 if any(n_w[s] >= COMMON_ICF for s in found) else min(1.0, mass / 4.0)   # naming the topic (not just its generic word) is specific enough
+    score = base * spec
+    score = score + (1 - score) * 0.5 * name_cov                      # mentioning the topic by name adds to the evidence
+    terms = [{"term": w, "support": round(sup[s][0], 2), "why": sup[s][1], "weight": round(w_[s], 2)} for w, s in stems]
+    return {**base_out, "terms": terms, "score": int(round(100 * score)), "name_found": found, "name_cov": round(name_cov, 2),
+            "focus": round(base, 2), "specificity": round(spec, 2)}
+
+
+def evaluate_topic(question, topic, doc=None):
+    """The topic-relevance metric for a GIVEN topic name. Same result shape as evaluate()."""
+    res = {"metric": "Topic relevance", "score": None, "band": None, "status": "not_evaluated", "method": None, "reason": "", "explains": TOPIC_EXPLAIN,
+           "evidence": None, "note": "", "topic": topic}
+    try:
+        r = topic_match(question, topic, doc)
+        if not r["terms"]:
+            return {**res, "evidence": {"removed": r["removed"], "phrases": r["phrases"], "given_topic": topic},
+                    "reason": "After removing the unwanted phrases and common words, no subject keyword is left in this question, so there is nothing to match to the topic."}
+        sc = r["score"]
+        found = [x["term"] for x in r["terms"] if x["support"] >= 0.65]
+        weak = [x["term"] for x in r["terms"] if 0 < x["support"] < 0.65]
+        absent = [x["term"] for x in r["terms"] if x["support"] == 0]
+        note = ""
+        if sc < STRONG:
+            other = relevance(question, doc)                              # which topic do the keywords point to instead?
+            if other.get("terms") and other["score"] >= max(MODERATE, sc + 20) and other["topic"].lower() != topic.lower() and other["topic"] not in (r["ref"] or ""):
+                note = f"The keywords point more to {other['topic']} ({other['score']}%) than to {topic}."
+            elif sc < MODERATE:
+                note = f"Most keywords are not part of {topic}. Use the topic's own terms, or check that the question is about this topic."
+        res.update(status="ok", score=sc, band=band(sc), method=f"bag-of-words keywords matched to the topic name: {topic} ({r['ref']})", note=note,
+                   evidence={"topic": topic, "given_topic": topic, "source": r["ref"], "kept": r["kept"], "removed": r["removed"], "phrases": r["phrases"],
+                             "terms": r["terms"], "focus": r["focus"], "specificity": r["specificity"], "name_found": r["name_found"],
+                             "supported": found, "weak": weak, "missing": absent, "spread": []})
+        return res
+    except Exception as e:
+        return {**res, "reason": f"The evaluation could not be completed ({type(e).__name__})."}
+
+
+def topic_score(question, topic, doc=None):
+    """Short form for validating generated questions: -> (score or None, band or None)."""
+    try:
+        r = topic_match(question, topic, doc)
+        return (r["score"], band(r["score"])) if r["terms"] else (None, None)
+    except Exception:
+        return None, None
+
+
+def evaluate(question, doc=None, topic=None):
+    """The main evaluation metric.  With a topic name -> Topic relevance (is the question about THAT topic?); without one -> Keyword relevance
+    (which topic do the keywords point to?).  -> {metric, score (0-100 or None), band, status ('ok' | 'not_evaluated'), method, reason, explains, evidence, note, topic}"""
+    if topic and str(topic).strip():
+        return evaluate_topic(question, str(topic).strip(), doc)
     res = {"metric": "Keyword relevance", "score": None, "band": None, "status": "not_evaluated", "method": None, "reason": "", "explains": REL_EXPLAIN,
            "evidence": None, "note": "", "topic": None}
     try:
@@ -334,7 +528,8 @@ def evaluate(question, doc=None):
         if spread and sc >= STRONG:
             sc = STRONG - 1                                           # a question that mixes topics cannot be 'Strong'
         res.update(status="ok", score=sc, band=band(sc), topic=r["topic"], method=f"bag-of-words keywords matched to the topic: {r['topic']} ({r['ref']})", note=note,
-                   evidence={"topic": r["topic"], "source": r["ref"], "kept": r["kept"], "removed": r["removed"], "terms": r["terms"], "focus": r["focus"],
+                   evidence={"topic": r["topic"], "source": r["ref"], "kept": r["kept"], "removed": r["removed"], "phrases": unwanted_phrases(question)[1],
+                             "terms": r["terms"], "focus": r["focus"],
                              "specificity": r["specificity"], "supported": found, "weak": weak, "missing": absent, "spread": [x["topic"] for x in spread]})
         return res
     except Exception as e:

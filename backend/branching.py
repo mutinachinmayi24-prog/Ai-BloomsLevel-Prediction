@@ -115,9 +115,13 @@ def match_choice(msg, options):
 
 # ----------------------------------------------------------------- branch on the KEYWORD RELEVANCE of an analysed question
 def score_line(rel):
+    name = rel.get("metric") or "Keyword relevance"
+    if rel.get("status") == "ok" and (rel.get("evidence") or {}).get("given_topic"):
+        verdict = {"Strong": "related to", "Moderate": "partly related to"}.get(rel["band"], "not related to")
+        return f"{name}: **{rel['score']}%** ({rel['band']}), {verdict} the topic **{rel['topic']}**."
     if rel.get("status") == "ok":
-        return f"Keyword relevance: **{rel['score']}%** ({rel['band']}), mainly about **{rel['topic']}**."
-    return f"Keyword relevance: **not evaluated** ({rel.get('reason', '').rstrip('.')})."
+        return f"{name}: **{rel['score']}%** ({rel['band']}), mainly about **{rel['topic']}**."
+    return f"{name}: **not evaluated** ({rel.get('reason', '').rstrip('.')})."
 
 
 def relevance_branch(rel):
@@ -145,6 +149,14 @@ def after_analysis(rel, level, question):
     b = relevance_branch(rel)
     topic = rel.get("topic")
     chips = []
+    given = (rel.get("evidence") or {}).get("given_topic")
+    if given and b in ("analysis.strong", "analysis.moderate", "analysis.weak"):      # checked against the topic the user named
+        extra = {"analysis.strong": " Its keywords belong to this topic.",
+                 "analysis.moderate": f" Only some of its keywords belong to {given}. Using the topic's own terms would make it sharper.",
+                 "analysis.weak": f" Its keywords are not about {given}." + (f" {rel['note']}" if rel.get("note") else "")}[b]
+        if b != "analysis.strong":
+            chips.append(_chip(f"More questions on {given}", f"Generate 5 questions on {given}", "spark"))
+        return f"{b} / {level_branch(level)}", extra + LEVEL_ASK[level_branch(level)], chips
     if b == "analysis.strong":
         extra = " The keywords agree on one syllabus topic."
         if topic:

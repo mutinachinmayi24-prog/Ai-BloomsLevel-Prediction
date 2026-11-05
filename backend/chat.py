@@ -176,8 +176,14 @@ def an(word):
     return "an" if word[:1].lower() in "aeiou" else "a"
 
 
-def do_analyze(q, ctx):
-    e = engine.evaluate_question(q, active_doc(ctx))
+def topic_of(q, ctx):
+    """The topic name a question was generated for (so its relevance is checked against THAT topic), or None."""
+    lg = ctx.get("last_gen") or {}
+    return lg.get("topic") if lg.get("kind") == "gen" and lg.get("topic") and q in (lg.get("shown") or []) else None
+
+
+def do_analyze(q, ctx, topic=None):
+    e = engine.evaluate_question(q, active_doc(ctx), topic or topic_of(q, ctx))
     p, rel = e["prediction"], e["relevance"]
     ctx = {**ctx, "question": q, "last": "question"}
     lvl = p["level"]
